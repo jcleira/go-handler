@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// CustomHandler it our Handler func enhanced to early return errors.
 type CustomHandler func(http.ResponseWriter, *http.Request) *HTTPError
 
 // HTTPError struct implements the Error interface to make easier return HTTP
