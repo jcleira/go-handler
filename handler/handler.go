@@ -93,6 +93,17 @@ func (ce *HTTPError) MarshalJSON() ([]byte, error) {
 // ServerHTTP is our custom implementation needed to satisfy the Handler
 // interface.
 func (ch CustomHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	if origin := req.Header.Get("Origin"); origin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
+
+	if req.Method == "OPTIONS" {
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := ch(w, req); err != nil {
