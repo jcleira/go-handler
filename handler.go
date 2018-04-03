@@ -27,3 +27,23 @@ func (fn CustomHandler) WithLog() http.Handler {
 		}
 	})
 }
+
+// WithCORS is a HTTP middleware to enable CORS on the given handler.
+//
+// Returns a CustomHandler with CORS enabled.
+func (fn CustomHandler) WithCORS() CustomHandler {
+	return CustomHandler(func(w http.ResponseWriter, r *http.Request) *Errors {
+		requestHeaders := r.Header.Get("Access-Control-Request-Headers")
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, PUT, DELETE, GET, OPTIONS")
+		w.Header().Set("Access-Control-Request-Method", "*")
+		w.Header().Set("Access-Control-Allow-Headers", requestHeaders)
+
+		if r.Method != "OPTIONS" {
+			return fn(w, r)
+		}
+
+		return nil
+	})
+}
